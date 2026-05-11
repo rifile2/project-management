@@ -80,9 +80,14 @@ const syncUserUpdation = inngest.createFunction(
 // Inngest Function to save workspace data to a database
 
 const syncWorkspaceCreation = inngest.createFunction(
-  { id: 'sync-workspace-from-clerk' },
-
-  { event: 'clerk/organization.created' },
+  {
+    id: "sync-workspace-from-clerk",
+    triggers: [
+      {
+        event: "clerk/organization.created",
+      },
+    ],
+  },
 
   async ({ event }) => {
     const { data } = event;
@@ -95,23 +100,20 @@ const syncWorkspaceCreation = inngest.createFunction(
         ownerId: data.created_by,
         image_url: data.image_url,
       },
-    })
-    await prisma.workspaceMember.create({
-      data:{
-        userID:data.created_by,
-        workspaceId:data.id,
-        role:"ADMIN"
-      }
-    })
+    });
   }
 );
-
 // Inngest Function to update workspace data in database
 
 const syncWorkspaceUpdation = inngest.createFunction(
-  { id: 'update-workspace-from-clerk' },
-
-  { event: 'clerk/organization.updated' },
+  {
+    id: "update-workspace-from-clerk",
+    triggers: [
+      {
+        event: "clerk/organization.updated",
+      },
+    ],
+  },
 
   async ({ event }) => {
     const { data } = event;
@@ -132,9 +134,14 @@ const syncWorkspaceUpdation = inngest.createFunction(
 // Inngest Function to delete workspace data from database
 
 const syncWorkspaceDeletion = inngest.createFunction(
-  { id: 'delete-workspace-from-clerk' },
-
-  { event: 'clerk/organization.deleted' },
+  {
+    id: "delete-workspace-from-clerk",
+    triggers: [
+      {
+        event: "clerk/organization.deleted",
+      },
+    ],
+  },
 
   async ({ event }) => {
     const { data } = event;
@@ -149,10 +156,17 @@ const syncWorkspaceDeletion = inngest.createFunction(
 
 // Inngest Function to save workspace member data to a database
 
-const syncWorkspaceMemberCreation = inngest.createFunction(
-  { id: "sync-workspace-member-from-clerk" },
+// Inngest Function to save workspace member data to a database
 
-  { event: "clerk/organizationMembership.created" },
+const syncWorkspaceMemberCreation = inngest.createFunction(
+  {
+    id: "sync-workspace-member-from-clerk",
+    triggers: [
+      {
+        event: "clerk/organizationMembership.created",
+      },
+    ],
+  },
 
   async ({ event }) => {
     const { data } = event;
@@ -166,7 +180,6 @@ const syncWorkspaceMemberCreation = inngest.createFunction(
     });
   }
 );
-
 // Export all functions
 
 export const functions = [
