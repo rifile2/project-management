@@ -1,10 +1,12 @@
 import { Inngest } from "inngest";
 import prisma from "../configs/prisma.js";
-// Create a client to send and receive events
+
+// Create Inngest client
 export const inngest = new Inngest({ id: "my-app" });
 
-// Create an empty array where we'll export future Inngest functions
-// Inngest Function to save user data to a database
+/* =========================
+   CREATE USER
+========================= */
 
 const syncUserCreation = inngest.createFunction(
   {
@@ -19,12 +21,16 @@ const syncUserCreation = inngest.createFunction(
       data: {
         id: data.id,
         email: data?.email_addresses?.[0]?.email_address || "",
-        name: data?.first_name + " " + data?.last_name,
-        image: data?.image_url,
+        name: `${data?.first_name || ""} ${data?.last_name || ""}`,
+        image: data?.image_url || "",
       },
     });
   }
 );
+
+/* =========================
+   DELETE USER
+========================= */
 
 const syncUserDeletion = inngest.createFunction(
   {
@@ -43,6 +49,10 @@ const syncUserDeletion = inngest.createFunction(
   }
 );
 
+/* =========================
+   UPDATE USER
+========================= */
+
 const syncUserUpdation = inngest.createFunction(
   {
     id: "update-user-from-clerk",
@@ -58,13 +68,16 @@ const syncUserUpdation = inngest.createFunction(
       },
 
       data: {
-        email: data?.email_addresses[0]?.email_address,
-        name: data?.first_name + " " + data?.last_name,
-        image: data?.image_url,
+        email: data?.email_addresses?.[0]?.email_address || "",
+        name: `${data?.first_name || ""} ${data?.last_name || ""}`,
+        image: data?.image_url || "",
       },
     });
   }
 );
+
+// Export all functions
+
 export const functions = [
   syncUserCreation,
   syncUserDeletion,
