@@ -150,22 +150,23 @@ const syncWorkspaceDeletion = inngest.createFunction(
 // Inngest Function to save workspace member data to a database
 
 const syncWorkspaceMemberCreation = inngest.createFunction(
-  { id: 'sync-workspace-member-from-clerk' },
+  { id: "sync-workspace-member-from-clerk" },
 
-  { event: 'clerk/organizationInvitation.accepted' },
+  { event: "clerk/organizationMembership.created" },
 
   async ({ event }) => {
     const { data } = event;
 
     await prisma.workspaceMember.create({
       data: {
-        userId: data.user_id,
-        workspaceId: data.organization_id,
-        role: String(data.role_name).toUpperCase(),
+        userId: data.public_user_data.user_id,
+        workspaceId: data.organization.id,
+        role: String(data.role).toUpperCase(),
       },
     });
   }
 );
+
 // Export all functions
 
 export const functions = [
@@ -173,8 +174,9 @@ export const functions = [
   syncUserDeletion,
   syncUserUpdation,
   syncWorkspaceCreation,
-  syncWorkspaceMemberCreation,
   syncWorkspaceUpdation,
-  syncWorkspaceDeletion
+  syncWorkspaceDeletion,
+  syncWorkspaceMemberCreation,
+
 
 ];
